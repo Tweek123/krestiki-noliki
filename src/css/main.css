@@ -1,0 +1,46 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#screen { 
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    width: 100%;
+
+    align-items: center;
+    justify-content: center;
+
+}
+
+.button-wrapper {
+    height: 50px;
+    background: green;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#startButton {
+    height: 20px;
+    width: 100px;
+}
+
+.field {
+    background: green;
+}
+
+.fieldRow {
+    display: flex;
+    flex-direction: line;
+    
+}
+
+.square {
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+    z-index: 2;
+}

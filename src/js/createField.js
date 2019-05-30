@@ -2,25 +2,24 @@ class square {
     constructor(x,y) {
         this.x = x;
         this.y = y;
-        this.clicked = false;
+        this.access = true;
         this.createSquare();
-
-
     }
+
     createSquare() {
-        this.square = document.createElement("div");
-        this.square.setAttribute("class",'square');
+        this.squareHTML = document.createElement("div");
+        this.squareHTML.setAttribute("class",'square');
 
         
         return this;
     }
 
     drawPicture(picture) {
-            this.square.setAttribute("background-image",picture);
+            this.squareHTML.setAttribute("background-image",picture);
     }
     resetSquare() {
-        this.clicked = false;
-        this.square.setAttribute("background-image","inherit");
+        this.access = true;
+        this.squareHTML.setAttribute("background-image","inherit");
     }
 }
 
@@ -59,7 +58,7 @@ class Field {
 
             for(let j=0;j<this.number;j++) {
                 lineSquare.push(new square(j,i));
-                fieldRow.appendChild(lineSquare[j].square);
+                fieldRow.appendChild(lineSquare[j].squareHTML);
             }
             field.appendChild(fieldRow);
 
@@ -70,13 +69,17 @@ class Field {
         this.krestiky = krestiky;
         this.noliky = noliky;
 
-        console.log(this.krestiky);
-        console.log(this.noliky);
-
-        this.field = field;
+        this.fieldHTML = field;
 
     }
-
+    
+    resetSquares() {
+        for(let i=0; i< this.number; i++) {
+            for(let j=0; j<this.number; j++) {
+                this.squares[i][j].resetSquare();
+            }
+        }
+    }
 
     createCheckRoutes() {
             let route;
@@ -98,7 +101,6 @@ class Field {
                 }
             }
 
-           
             for(let i =0; i < this.number; i++) {
                 
                 for(let j =0; j < this.number; j++) {
@@ -108,8 +110,8 @@ class Field {
                         routes[i][j].down = true;
                         routes[i][j].diagRight = true;
 
-                    } else if(this.squares[i][j].number === this.squares[i][j].y) {
-                        
+                    } else if(this.number-1 === this.squares[i][j].x && this.squares[i][j].y === 0) {
+
                         routes[i][j].down = true;
                         routes[i][j].diagLeft = true;
 

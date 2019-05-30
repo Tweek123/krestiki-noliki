@@ -10,19 +10,26 @@ class krestikiNoliki {
         this.buttonStartGame = buttonStartGame;
         this.FieldSize  = 3;
         
-
+        this.Field = new Field (this.FieldSize);
+        this.players[0].mainPlayer = true;
+        console.log(this.players);
+        this.screen.appendChild(this.Field.fieldHTML);
+        this.initEventClickOnSquare();
         this.initEventStartGame();
+
     }
 
     initEventStartGame() {
 
+        this.buttonStartGame.addEventListener("click",   function () {  
+            this.startGame();
+        }.bind(this));
+    }
 
-            this.Field = new Field (this.FieldSize);
-            this.players[0].mainPlayer = true;
-
-  
-        this.checkWon(this.players[0]);
-       // this.buttonStartGame.addEventListener("onclick",startGame.bind(this));
+    startGame() {
+        this.Field.resetSquares();
+        this.players[0].mainPlayer = true;
+        
     }
 
     initEventClickOnSquare() {
@@ -30,174 +37,233 @@ class krestikiNoliki {
         for(let i =0; i< this.Field.number; i++) {
             for(let j=0; j< this.Field.number; j++) {
 
+                
                 let clickOnSquareEv = function() {
-
-                    let thatSquare = this.Field.squares[i][j];
-                    if(thatSquare.clicked === false) {
-                       
-                        this.refreshGame(thatSquare);
                     
+                    let thatSquare = this.Field.squares[i][j];
+
+                    if(thatSquare.access === true) {
+                        this.refreshGame(thatSquare);
                     }
 
+                    thatSquare.access = false;
+
                 }.bind(this)
+  
                 
-                this.Field.squares[i][j].addEventListener("onclick",clickOnSquareEv)
+                this.Field.squares[i][j].squareHTML.addEventListener("click",clickOnSquareEv);
             }
         }
     }
 
-    changePlayerAndDrawPicture(thatSquare) {
-        let Won = false;
-
-        for(let i=0; i<this.players.length;i++){
-
-
-            if(this.players[i].mainPlayer === true) {                    
-                
-                x = thatSquare.x;
-                y = thatSquare.y;
-
-                if(this.players[i].symbol === "Krestiki") {
-                    
-                    this.Field.krestiky[x][y] = thatSquare;
-
-                } else if(this.players[i].symbol === "Noliki") {
-
-                    this.Field.noliky[x][y] = thatSquare;
-
-                }
-
-                if(i+1 !== this.players.length) {
-                    this.players[i+1].mainPlayer = true; 
-                } else {
-                    this.players[0].mainPlayer = true;
-                }
-
-                thatSquare.drawPicture(this.players[i].picture);
-                this.players[i].mainPlayer = false;
-
-                Won = this.checkWon(this.players[i]);
-
-             }
-          }   
-    }
-
     findMainPlayer() {
+        let MainPlayer;
+
+        for(let i = 0; i< this.players.length; i++) {
+            if(this.players[i].mainPlayer === true) {
+                MainPlayer = this.players[i];
+            }
+        }
+        return MainPlayer;
         
     }
 
-    refreshGame(clickedSquare) {
 
+    refreshGame(clickedSquare) {
+        let player = this.findMainPlayer();
+        
+        clickedSquare.drawPicture(player.picture); 
+        this.addSquare(player,clickedSquare);
+        let checkResult  = this.checkWon(player);
+
+        if(checkResult.Won === true) {
+            this.representRoute(checkResult.route);
+            this.representWinner(player);
+            this.offFieldAccess();
+        } else {    
+            console.log(this.players);
+            this.changePlayer()
+        }
+
+    }
+
+    addSquare(player,square) {
+
+        let x = square.x;
+        let y = square.y;
+
+        if(player.symbol ==="Krestiki") {
+            this.Field.krestiky[y][x] = square;
+        } else {
+            this.Field.noliky[y][x] = square;
+        }
+
+    }
+
+    offFieldAccess() {
+
+        for(let i = 0; i< this.Field.number; i++) {
+
+            for(let j = 0; j < this.Field.number; j++) {
+                
+                this.Field.squares[i][j].access = false; 
+            }
+        }
+    }
+
+    representRoute(route) {
+        for(let i = 0; i < this.Field.number; i++) {
+            route[i].squareHTML.style.border = "1px solid Red";
+        }
+    }
+
+    representWinner(player) {
+        alert(player.name);
+    }
+    changePlayer() {
+
+        for(let i =0; i< this.players.length; i++) {
+            this.players[i].mainPlayer = !this.players[i].mainPlayer; 
+        }
+        
     }
 
     checkWon(player) {
 
             let checkArray;
-
-            let Won = false;
-
-
+            let checkedResult = new Object;
+            
+            checkedResult.Won = false;
+            checkedResult.Route = [];
             if(player.symbol === "Krestiki") {
 
                 checkArray = this.Field.krestiky;
 
             } else if(player.symbol === "Noliki") {
-                
+                    
                 checkArray = this.Field.noliky;
 
             }
-
+            
 
             for(let i = 0; i < this.Field.number; i++) {
                     for(let j = 0; j < this.Field.number; j++) {
 
                             if(typeof(checkArray[i][j]) !== "undefined") {
-
                                 if(this.Field.routes[i][j].right === true) {
-                                    
-                                    Won  = this.checkRightWon(checkArray,i,j);                
+
+                                    checkedResult  = this.checkRightWon(checkArray,j,i);                
                                 }
 
-                                if(this.Field.routes[i][j].down === true) {
+                                if(this.Field.routes[i][j].down === true && checkedResult.Won=== false) {
                                     
-                                    Won  = this.checkDownWon(checkArray,i,j);
+                                    checkedResult  = this.checkDownWon(checkArray,j,i);
                                 }
 
                                 
-                                if(this.Field.routes[i][j].diagRight === true) {
+                                if(this.Field.routes[i][j].diagRight === true && checkedResult.Won=== false) {
 
-                                    Won  = this.checkDiagRightWon(checkArray,i,j);
-
-                                }
-
-                                if(this.Field.routes[i][j].diagLeft === true) {
-
-                                    Won  = this.checkDiagLeftWon(checkArray,i,j);
+                                    checkedResult  = this.checkDiagRightWon(checkArray,j,i);
 
                                 }
 
+                                if(this.Field.routes[i][j].diagLeft === true && checkedResult.Won=== false) {
 
-                                if(Won === true) {
-                                    return Won;
+                                    checkedResult  = this.checkDiagLeftWon(checkArray,j,i);
+
+                                }
+
+
+                                if(checkedResult.Won === true) {
+                                    return checkedResult;
                                 }
 
                             }
                     }
             }
+
+            return checkedResult;
+     
            
         }
 
 
         checkRightWon(checkArray,x,y) {
+     
+            let checkedResult = new Object;
             let Won = true;
+            let route = new Array(this.Field.number);
+            for(let i = 0; i < this.Field.number; i++) {
 
-            for(let i = 0; i < this.number; i++) {
-               if(typeof(checkArray[x+i,y]) === "undefined") {
+
+               if(typeof(checkArray[y][x+i]) === "undefined") {
                     Won = false;
-               }      
+               }    
+               
+               route[i] = checkArray[y][x+i];
             }
 
-            return Won;
+            console.log(route);
+            checkedResult.Won = Won;
+            checkedResult.route = route;
+
+            return checkedResult;
         }
 
-        checkDownWon() {             
-            
+        checkDownWon(checkArray,x,y) {             
+            let checkedResult = new Object;
             let Won = true;
-
-            for(let i = 0; i < this.number; i++) {
-               if(typeof(checkArray[x,y+i]) === "undefined") {
+            let route = new Array(this.Field.number);
+            for(let i = 0; i < this.Field.number; i++) {
+               if(typeof(checkArray[y+i][x]) === "undefined") {
                     Won = false;
                }      
+
+               route[i] = checkArray[y+i][x];
             }
-            
-            return Won;
+            checkedResult.Won = Won;
+            checkedResult.route = route;
+
+            return checkedResult;
 
         }
 
-        checkDiagRightWon() {
-
+        checkDiagRightWon(checkArray,x,y) {
+            let checkedResult = new Object;
             let Won = true;
-
-            for(let i = 0; i < this.number; i++) {
-               if(typeof(checkArray[x+i,y+i]) === "undefined") {
+            let route = new Array(this.Field.number);
+            for(let i = 0; i < this.Field.number; i++) {
+               if(typeof(checkArray[y+i][x+i]) === "undefined") {
                     Won = false;
-               }      
+               }    
+               route[i] = checkArray[y+i][x+i];
             }
-            
-            return Won;
+            checkedResult.Won = Won;
+            checkedResult.route = route;
+
+            return checkedResult;
 
         }
 
-        checkDiagLeftWon()  {
-
+        checkDiagLeftWon(checkArray,x,y)  {
+            let checkedResult = new Object;
             let Won = true;
+            let route = new Array(this.Field.number);
+            
 
-            for(let i = 0; i < this.number; i++) {
-               if(typeof(checkArray[x-i,y+i]) === "undefined") {
+            for(let i = 0; i < this.Field.number; i++) {
+            
+               if(typeof(checkArray[y+i][x-i]) === "undefined") {
                     Won = false;
                }      
+
+               route[i] = checkArray[y+i][x-i];
             }
-            return Won;
+
+            checkedResult.Won = Won;
+            checkedResult.route = route;
+
+            return checkedResult;
         }
 
         
@@ -207,8 +273,9 @@ class krestikiNoliki {
 
 
 
-    console.log(players);
-    let krn = new krestikiNoliki(players,document.createElement("div"),Field,document.createElement("div"),document.createElement("div"));
+    let screen = document.getElementById('screen');
+    let buttonStart  = document.getElementById('startButton');
+    let krn = new krestikiNoliki(players,screen,Field,buttonStart);
 
 
 
