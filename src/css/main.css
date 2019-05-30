@@ -23,9 +23,11 @@
     justify-content: center;
 }
 
-#startButton {
+#resetButton {
     height: 20px;
     width: 100px;
+    background: none;
+    border: 1px solid black;
 }
 
 
@@ -43,7 +45,3 @@
     margin: 0px;
 }
 
-#startButton {
-    background: none;
-    border: 1px solid black;
-}

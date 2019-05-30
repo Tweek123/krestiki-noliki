@@ -26,8 +26,7 @@ class square {
     resetSquare() {
         
         this.access = true;
-
-        this.squareHTML.setAttribute("class",'square');
+        this.squareHTML.style.backgroundImage = "inherit";
         this.squareHTML.style.border = "solid 1px black";
     }
 }
@@ -83,7 +82,6 @@ class Field {
     }
     
     resetField() {
-
 
         for(let i =0; i < this.number; i++) {
             for(let j=0; j< this.number; j++) {

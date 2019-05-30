@@ -1,31 +1,28 @@
-import  Field from './createField.js'
-import  players from './createPlayers.js'
-
 class krestikiNoliki {
-    constructor(players, screen, createField, buttonStartGame) {
+    constructor(players, screen, createField, buttonResetGame) {
         
         this.players = players;
         this.screen = screen;
         this.createField = createField;
-        this.buttonStartGame = buttonStartGame;
+        this.buttonResetGame = buttonResetGame;
         this.FieldSize  = 3;
         
-        this.Field = new Field (this.FieldSize);
+        this.Field = new createField (this.FieldSize);
         this.players[0].mainPlayer = true;
         this.screen.appendChild(this.Field.fieldHTML);
         this.initEventClickOnSquare();
-        this.initEventStartGame();
+        this.initEventResetGame();
 
     }
 
-    initEventStartGame() {
-
-        this.buttonStartGame.addEventListener("click",   function () {  
-            this.startGame();
+    initEventResetGame() {
+        
+        this.buttonResetGame.addEventListener("click",   function () {  
+            this.resetGame();
         }.bind(this));
     }
 
-    startGame() {
+    resetGame() {
         this.Field.resetField();
         this.players[0].mainPlayer = true;
         this.players[1].mainPlayer = false;
@@ -265,15 +262,6 @@ class krestikiNoliki {
 
         
     }
-
-
-
-
-
-    let screen = document.getElementById('screen');
-    let buttonStart  = document.getElementById('startButton');
-    let krn = new krestikiNoliki(players,screen,Field,buttonStart);
-
-
+  
 
     export default krestikiNoliki
