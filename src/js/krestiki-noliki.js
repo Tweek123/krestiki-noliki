@@ -12,7 +12,6 @@ class krestikiNoliki {
         
         this.Field = new Field (this.FieldSize);
         this.players[0].mainPlayer = true;
-        console.log(this.players);
         this.screen.appendChild(this.Field.fieldHTML);
         this.initEventClickOnSquare();
         this.initEventStartGame();
@@ -27,16 +26,15 @@ class krestikiNoliki {
     }
 
     startGame() {
-        this.Field.resetSquares();
+        this.Field.resetField();
         this.players[0].mainPlayer = true;
-        
+        this.players[1].mainPlayer = false;
     }
 
     initEventClickOnSquare() {
         
         for(let i =0; i< this.Field.number; i++) {
             for(let j=0; j< this.Field.number; j++) {
-
                 
                 let clickOnSquareEv = function() {
                     
@@ -72,7 +70,7 @@ class krestikiNoliki {
     refreshGame(clickedSquare) {
         let player = this.findMainPlayer();
         
-        clickedSquare.drawPicture(player.picture); 
+        clickedSquare.drawPicture(player.symbol); 
         this.addSquare(player,clickedSquare);
         let checkResult  = this.checkWon(player);
 
@@ -81,7 +79,6 @@ class krestikiNoliki {
             this.representWinner(player);
             this.offFieldAccess();
         } else {    
-            console.log(this.players);
             this.changePlayer()
         }
 
@@ -118,8 +115,9 @@ class krestikiNoliki {
     }
 
     representWinner(player) {
-        alert(player.name);
+        alert("Winner: \ "+player.name);
     }
+
     changePlayer() {
 
         for(let i =0; i< this.players.length; i++) {
@@ -144,7 +142,6 @@ class krestikiNoliki {
                 checkArray = this.Field.noliky;
 
             }
-            
 
             for(let i = 0; i < this.Field.number; i++) {
                     for(let j = 0; j < this.Field.number; j++) {
@@ -203,7 +200,7 @@ class krestikiNoliki {
                route[i] = checkArray[y][x+i];
             }
 
-            console.log(route);
+           
             checkedResult.Won = Won;
             checkedResult.route = route;
 

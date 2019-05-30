@@ -16,7 +16,7 @@
 
 .button-wrapper {
     height: 50px;
-    background: green;
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -28,9 +28,6 @@
     width: 100px;
 }
 
-.field {
-    background: green;
-}
 
 .fieldRow {
     display: flex;
@@ -39,8 +36,14 @@
 }
 
 .square {
+    background-size: cover;
     border: 1px solid black;
     width: 100px;
     height: 100px;
-    z-index: 2;
+    margin: 0px;
+}
+
+#startButton {
+    background: none;
+    border: 1px solid black;
 }

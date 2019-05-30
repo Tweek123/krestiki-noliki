@@ -7,19 +7,28 @@ class square {
     }
 
     createSquare() {
+
         this.squareHTML = document.createElement("div");
         this.squareHTML.setAttribute("class",'square');
 
-        
         return this;
     }
 
-    drawPicture(picture) {
-            this.squareHTML.setAttribute("background-image",picture);
+    drawPicture(symbol) {
+
+        if(symbol === "Krestiki") {
+            this.squareHTML.style.backgroundImage = "url('/assets/img/33.png')";
+        } else {
+            this.squareHTML.style.backgroundImage = "url('/assets/img/icons8-круг-64.png')";
+        }
+        
     }
     resetSquare() {
+        
         this.access = true;
-        this.squareHTML.setAttribute("background-image","inherit");
+
+        this.squareHTML.setAttribute("class",'square');
+        this.squareHTML.style.border = "solid 1px black";
     }
 }
 
@@ -73,7 +82,18 @@ class Field {
 
     }
     
-    resetSquares() {
+    resetField() {
+
+
+        for(let i =0; i < this.number; i++) {
+            for(let j=0; j< this.number; j++) {
+                
+                this.krestiky[i][j] = undefined;
+                this.noliky[i][j] = undefined;
+            }
+
+        }
+        
         for(let i=0; i< this.number; i++) {
             for(let j=0; j<this.number; j++) {
                 this.squares[i][j].resetSquare();
