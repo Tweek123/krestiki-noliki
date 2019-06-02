@@ -23,6 +23,7 @@ class square {
         }
         
     }
+    
     resetSquare() {
         
         this.access = true;
